@@ -1,7 +1,7 @@
 import PlayButton from "./PlayButton";
 import Video from './Video'
 
-function VideoList({videos}){
+function VideoList({videos, deleteVideo, editVideo}){
     return(
         <>
         {
@@ -14,6 +14,8 @@ function VideoList({videos}){
           time={video.time}
           channel={video.channel}
           verified={video.verified}
+          deleteVideo={deleteVideo}
+          editVideo={editVideo}
           >
           <PlayButton
           onPlay={()=>console.log('Playing', video.title)} onPause={()=>console.log('Paused', video.title)}>{video.title}</PlayButton>
