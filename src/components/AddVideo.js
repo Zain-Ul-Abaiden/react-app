@@ -1,43 +1,62 @@
-import { useEffect, useState } from 'react';
-import './AddVideo.css';
-
+import { useEffect, useRef, useState } from "react";
+import useVideoDispatch from "../hooks/VideoDispatch";
+import "./AddVideo.css";
 const initialState = {
-    title:'',
-    views:'',
-    time: '1 month ago',
-    channel: 'Coder Dost',
-    verified: true
+  title: "",
+  views: "",
+  time: "1 month ago",
+  channel: "Coder Dost",
+  verified: true,
 };
 
-function AddVideo({addVideos, updateVideo, editableVideo}){
-    const [video, setVideo] =useState(initialState);
+function AddVideo({ editableVideo }) {
+  const [video, setVideo] = useState(initialState);
+  const dispatch = useVideoDispatch();
+  const inputRef = useRef(null);
 
-    function handleSubmit(e){
-        e.preventDefault();
-        if(editableVideo){
-            updateVideo(video);
-        }else{
-            addVideos(video);
-        }
-        setVideo(initialState);
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (editableVideo) {
+      dispatch({ type: "UPDATE", payload: video });
+    } else {
+      dispatch({ type: "ADD", payload: video });
     }
+    setVideo(initialState);
+  }
 
-    function handleChange(e){
-        setVideo({...video, [e.target.name] : e.target.value})
+  function handleChange(e) {
+    setVideo({ ...video, [e.target.name]: e.target.value });
+  }
+
+  useEffect(() => {
+    if (editableVideo) {
+      setVideo(editableVideo);
     }
+    inputRef.current.focus();
 
-    useEffect(()=>{
-        if(editableVideo){
-            setVideo(editableVideo);
-        }
-    }, [editableVideo])
-    return(
-        <form>
-            <input type="text" name="title" onChange={handleChange} placeholder='title' value={video.title}/>
-            <input type="text" name="views" onChange={handleChange} placeholder='views' value={video.views}/>
-            <button onClick={handleSubmit}>{editableVideo?'Edit':'Add'} Video</button>
-        </form>
-    )
-};
+  }, [editableVideo]);
+  return (
+    <form>
+      <input
+        ref={inputRef}
+        type="text"
+        name="title"
+        onChange={handleChange}
+        placeholder="title"
+        value={video.title}
+      />
+      <input
+        type="text"
+        name="views"
+        onChange={handleChange}
+        placeholder="views"
+        value={video.views}
+      />
+      <button onClick={handleSubmit}>
+        {editableVideo ? "Edit" : "Add"} Video
+      </button>
+    </form>
+  );
+}
 
 export default AddVideo;

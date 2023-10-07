@@ -1,14 +1,31 @@
 import './Video.css';
+import useVideoDispatch from '../hooks/VideoDispatch';
+import useTheme from '../hooks/Theme';
+// import { useEffect } from 'react';
 
-function Video({id, title, channel="Coder Dost", views, time, verified, children, deleteVideo, editVideo}){
+function Video({id, title, channel="Coder Dost", views, time, verified, children, editVideo}){
 
-    console.log("Render Video")
-    
+    console.log("Render Video", id)
+
+    const theme = useTheme();
+    const dispatch = useVideoDispatch();
+
+    // useEffect(()=>{
+    //     const idx =setInterval(()=>{
+    //         console.log('video playing', id)
+    //     },3000)
+
+    //     return ()=>{
+    //         clearInterval(idx);
+    //     }
+
+    // },[id])
+
     return(
         <>
-        <div className='container'>
-        <button className='close' onClick={()=>deleteVideo(id)}>X</button>
-        <button className='edit' onClick={()=>deleteVideo(id)}>Edit</button>
+        <div className={`container ${theme}`}>
+        <button className='close' onClick={()=>dispatch({type: 'DELETE', payload : id})}>X</button>
+        <button className='edit' onClick={()=>editVideo(id)}>Edit</button>
         <div className='pic'>
             <img src={`https://picsum.photos/id/${id}/160/90`} alt="Random Pic" height={150} />
         </div>
