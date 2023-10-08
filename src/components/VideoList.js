@@ -1,37 +1,41 @@
 import PlayButton from "./PlayButton";
-import Video from './Video'
+import Video from "./Video";
 import useVideos from "../hooks/Videos";
 import axios from "axios";
-import { useEffect } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo } from "react";
 import useVideoDispatch from "../hooks/VideoDispatch";
 
-function VideoList({editVideo}){
+function VideoList({ editVideo }) {
+  const url = "https://my.api.mockaroo.com/video.json?key=ddbe1a80";
 
-    const url = "https://my.api.mockaroo.com/video.json?key=ddbe1a80";
+  const videos = useVideos();
+  const dispatch = useVideoDispatch();
+  const defVideos = useDeferredValue(videos);
 
-    const videos = useVideos();
+  async function handleClick() {
+    const res = await axios.get(url);
+    dispatch({ type: "LOAD", payload: res.data });
+  }
 
-    const dispatch = useVideoDispatch();
+  useEffect(() => {
+    // async function getVideos() {
+    //   const res = await axios.get(url);
+    //   dispatch({ type: "LOAD", payload: res.data });
+    // }
+    // getVideos();
+  }, [dispatch]);
 
-    async function handleClick(){
-        const res = await axios.get(url);
-        console.timeLog('get videos', res.data);
-        dispatch({type: 'LOAD', payload: res.data});
-    }
+  const play = useCallback(() => console.log("Playing...."), []);
+  const pause = useCallback(() => console.log("Paused...."), []);
 
-    useEffect(()=>{
-        async function getVideos(){
-            const res = await axios.get(url);
-            console.timeLog('get videos', res.data);
-            dispatch({type: 'LOAD', payload: res.data});
-        }
-        getVideos();
-    },[])
+  const memoButton = useMemo(
+    () => <PlayButton onPlay={play} onPause={pause}>Play</PlayButton>,
+    [pause,play]
+  );
 
-    return(
-        <>
-        {
-        videos.map(video =>
+  return (
+    <>
+      {defVideos.map((video) => (
         <Video
           key={video.id}
           id={video.id}
@@ -41,15 +45,14 @@ function VideoList({editVideo}){
           channel={video.channel}
           verified={video.verified}
           editVideo={editVideo}
-          >
-          <PlayButton
-          onPlay={()=>console.log('Playing', video.title)} onPause={()=>console.log('Paused', video.title)}>{video.title}</PlayButton>
-          </Video>)
-      }
+        >
+          {memoButton}
+        </Video>
+      ))}
 
       <button onClick={handleClick}>Get Videos</button>
-        </>
-    )
-};
+    </>
+  );
+}
 
 export default VideoList;

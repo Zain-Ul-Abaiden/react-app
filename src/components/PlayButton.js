@@ -1,8 +1,8 @@
 import useTheme from '../hooks/Theme';
 import './PlayButton.css';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
-function PlayButton({children, onPlay, onPause}){
+const PlayButton = memo(function PlayButton({children, onPlay, onPause}){
     console.log("Render PlayButton")
 
     const theme = useTheme();
@@ -21,6 +21,6 @@ function PlayButton({children, onPlay, onPause}){
     return (
         <button className={theme} onClick={handleClick}>{children} : {playing?'⏸️':'▶️'}</button>
     )
-}
+});
 
 export default PlayButton;    
